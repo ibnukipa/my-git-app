@@ -32,6 +32,7 @@ const Dropdown = memo(({width = 150, ...props}: Props) => {
       selectedItemContainerStyle={dropdownStyle.selectedOption}
       selectedItemLabelStyle={dropdownStyle.selectedOptionText}
       disabledItemLabelStyle={dropdownStyle.optionDisabled}
+      labelStyle={dropdownStyle.text}
     />
   );
 });
@@ -39,15 +40,19 @@ const Dropdown = memo(({width = 150, ...props}: Props) => {
 const dropdownStyle = StyleSheet.create({
   container: {
     marginVertical: 5,
-    borderWidth: 1,
-    borderColor: Colors.blue,
+    borderWidth: 2,
+    borderColor: Colors.blueLighter,
     padding: 0,
     borderRadius: 8,
     height: 35,
   },
+  text: {
+    color: Colors.blueDeep,
+  },
   optionsContainer: {
     backgroundColor: Colors.white,
-    borderColor: Colors.blue,
+    borderColor: Colors.blueLighter,
+    borderWidth: 2,
     borderTopWidth: 0,
   },
   option: {

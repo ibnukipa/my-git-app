@@ -16,7 +16,11 @@ import {StatusBar} from 'react-native';
 const App: () => Node = () => {
   return (
     <>
-      <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'} />
+      <StatusBar
+        translucent
+        backgroundColor={Colors.transparent}
+        barStyle={'dark-content'}
+      />
       <Router />
     </>
   );
