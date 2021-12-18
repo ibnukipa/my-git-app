@@ -13,7 +13,7 @@ type Props = {
   isLoading?: boolean,
 } & TouchableOpacityProps;
 
-const Button = memo(({label, disabled, isLoading, ...props}: Props) => {
+const Button = memo(({label, disabled, isLoading, style, ...props}: Props) => {
   return (
     <TouchableOpacity
       {...props}
@@ -22,6 +22,7 @@ const Button = memo(({label, disabled, isLoading, ...props}: Props) => {
       style={[
         buttonStyle.container,
         disabled && buttonStyle.disabledContainer,
+        style,
       ]}>
       {isLoading ? (
         <ActivityIndicator color={Colors.white} />

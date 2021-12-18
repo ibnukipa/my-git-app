@@ -20,6 +20,8 @@ import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import useBackdropBS from '../hooks/useBackdropBS';
 import Divider from '../components/Divider';
 import authenticateGithub from '../services/authenticateGithub';
+import {useDispatch} from 'react-redux';
+import {login} from '../states/reducers/auth';
 
 const GIT_PROVIDERS: Array<ItemType> = [
   {label: 'GitHub', value: 'github'},
@@ -37,6 +39,7 @@ const openHowToCreatePersonalTokenPress = () =>
 
 const LoginScreen = () => {
   const insets = useSafeAreaInsets();
+  const dispatch = useDispatch();
   const [provider, setProvider] = useState('github');
   const [username, setUsername] = useState(null);
   const [usernameError, setUsernameError] = useState(null);
@@ -83,14 +86,14 @@ const LoginScreen = () => {
         if (!response.id) {
           setPasswordError(response.message);
         } else {
-          // logged in
+          dispatch(login({username, token: response.token}));
         }
         setAuthenticateIsLoading(false);
         break;
       default:
         break;
     }
-  }, [password, provider, username]);
+  }, [dispatch, password, provider, username]);
 
   return (
     <>
@@ -144,7 +147,8 @@ const LoginScreen = () => {
           backdropComponent={renderBackdrop}
           ref={passwordFormBS}
           style={loginStyle.bsPasswordContainer}
-          snapPoints={['50%']}>
+          keyboardBlurBehavior={'restore'}
+          snapPoints={[400]}>
           <View style={loginStyle.bsPasswordContentContainer}>
             <View>
               <Text bold size={42}>
@@ -170,6 +174,7 @@ const LoginScreen = () => {
               />
               <Divider height={30} />
               <Button
+                style={{marginBottom: insets.bottom + 15}}
                 onPress={onAuthenticatePress}
                 disabled={!password || passwordError || authenticateIsLoading}
                 isLoading={authenticateIsLoading}

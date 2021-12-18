@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useCallback, useContext} from 'react';
 import {
   StyleSheet,
   TextInput as RNTextInput,
@@ -7,31 +7,62 @@ import {
 } from 'react-native';
 import Colors from '../constants/colors';
 import Text from './Text';
+import {BottomSheetInternalContext} from '@gorhom/bottom-sheet/src/contexts/internal';
 
 type Props = {
   errorMessage?: string,
+  isNormal?: boolean,
 } & TextInputProps;
 
-const TextInput = memo(({errorMessage, ...props}: Props) => {
-  return (
-    <>
-      <RNTextInput
-        {...props}
-        placeholderTextColor={Colors.gray}
-        style={textInputStyle.textInput}
-      />
-      {errorMessage && (
-        <View>
-          <View style={textInputStyle.errorMessage}>
-            <Text size={12} color={Colors.red}>
-              {errorMessage}
-            </Text>
+const TextInput = memo(
+  ({errorMessage, onFocus, onBlur, isNormal = true, ...props}: Props) => {
+    const context = useContext(BottomSheetInternalContext);
+
+    const handleOnFocus = useCallback(
+      args => {
+        if (context) {
+          context.shouldHandleKeyboardEvents.value = true;
+        }
+        if (onFocus) {
+          onFocus(args);
+        }
+      },
+      [onFocus, context],
+    );
+    const handleOnBlur = useCallback(
+      args => {
+        if (context) {
+          context.shouldHandleKeyboardEvents.value = false;
+        }
+        if (onBlur) {
+          onBlur(args);
+        }
+      },
+      [onBlur, context],
+    );
+
+    return (
+      <>
+        <RNTextInput
+          {...props}
+          placeholderTextColor={Colors.gray}
+          style={textInputStyle.textInput}
+          onFocus={handleOnFocus}
+          onBlur={handleOnBlur}
+        />
+        {errorMessage && (
+          <View>
+            <View style={textInputStyle.errorMessage}>
+              <Text size={12} color={Colors.red}>
+                {errorMessage}
+              </Text>
+            </View>
           </View>
-        </View>
-      )}
-    </>
-  );
-});
+        )}
+      </>
+    );
+  },
+);
 
 const textInputStyle = StyleSheet.create({
   textInput: {
