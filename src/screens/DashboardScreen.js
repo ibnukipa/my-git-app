@@ -1,24 +1,32 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import Text from '../components/Text';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import styles from '../constants/styles';
-import {useSelector} from 'react-redux';
-import {authStateSelector} from '../states/reducers/auth';
+import SearchInput from '../components/SearchInput';
+import Button from '../components/Button';
 
 const DashboardScreen = () => {
-  const authState = useSelector(authStateSelector);
-
   return (
-    <View style={[styles.container, dashboardStyle.container]}>
-      <Text bolder size={24}>
-        Dashboard
-      </Text>
+    <View style={[styles.container]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={dashboardStyle.container}>
+        <SearchInput
+          autoFocus={false}
+          value={'facebook/react-native'}
+          placeholder={'Search'}
+        />
+        <Button compact label={'Search'} />
+      </KeyboardAvoidingView>
     </View>
   );
 };
 
 const dashboardStyle = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    paddingHorizontal: 30,
+    justifyContent: 'center',
+  },
 });
 
 export default DashboardScreen;
