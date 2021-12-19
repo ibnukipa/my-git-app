@@ -11,29 +11,33 @@ import Text from './Text';
 type Props = {
   label: string,
   isLoading?: boolean,
+  compact?: boolean,
 } & TouchableOpacityProps;
 
-const Button = memo(({label, disabled, isLoading, style, ...props}: Props) => {
-  return (
-    <TouchableOpacity
-      {...props}
-      disabled={disabled}
-      activeOpacity={0.6}
-      style={[
-        buttonStyle.container,
-        disabled && buttonStyle.disabledContainer,
-        style,
-      ]}>
-      {isLoading ? (
-        <ActivityIndicator color={Colors.white} />
-      ) : (
-        <Text size={20} bolder color={Colors.white}>
-          {label}
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
-});
+const Button = memo(
+  ({label, disabled, isLoading, style, compact, ...props}: Props) => {
+    return (
+      <TouchableOpacity
+        {...props}
+        disabled={disabled}
+        activeOpacity={0.6}
+        style={[
+          buttonStyle.container,
+          compact && buttonStyle.compact,
+          disabled && buttonStyle.disabledContainer,
+          style,
+        ]}>
+        {isLoading ? (
+          <ActivityIndicator color={Colors.white} />
+        ) : (
+          <Text size={compact ? 16 : 20} bolder color={Colors.white}>
+            {label}
+          </Text>
+        )}
+      </TouchableOpacity>
+    );
+  },
+);
 
 const buttonStyle = StyleSheet.create({
   container: {
@@ -44,7 +48,10 @@ const buttonStyle = StyleSheet.create({
     borderRadius: 50,
   },
   disabledContainer: {
-    backgroundColor: Colors.gray,
+    backgroundColor: Colors.grey,
+  },
+  compact: {
+    height: 40,
   },
 });
 

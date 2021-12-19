@@ -63,7 +63,7 @@ const dropdownStyle = StyleSheet.create({
     borderRadius: 8,
   },
   optionDisabled: {
-    color: Colors.gray,
+    color: Colors.grey,
   },
   selectedOption: {
     backgroundColor: Colors.blue,

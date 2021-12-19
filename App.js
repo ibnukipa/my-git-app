@@ -19,7 +19,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 const App: () => Node = () => {
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
         <StatusBar
           translucent
           backgroundColor={Colors.transparent}

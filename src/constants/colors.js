@@ -5,7 +5,9 @@ export default {
   blueLight: '#75acf6',
   blueLighter: '#eaf1ff',
   red: '#f6736f',
-  gray: '#a1a7b6',
+  grey: '#a1a7b6',
+  greyLight: '#E2E3E9',
+  greyLighter: '#F2F2F7',
   white: '#fff',
   transparent: 'transparent',
 };

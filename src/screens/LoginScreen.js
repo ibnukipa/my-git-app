@@ -22,6 +22,7 @@ import Divider from '../components/Divider';
 import authenticateGithub from '../services/authenticateGithub';
 import {useDispatch} from 'react-redux';
 import {login} from '../states/reducers/auth';
+import {insertModel} from '../states/reducers/db';
 
 const GIT_PROVIDERS: Array<ItemType> = [
   {label: 'GitHub', value: 'github'},
@@ -86,7 +87,10 @@ const LoginScreen = () => {
         if (!response.id) {
           setPasswordError(response.message);
         } else {
-          dispatch(login({username, token: response.token}));
+          dispatch(
+            insertModel({model: 'users', id: response.id, data: response}),
+          );
+          dispatch(login({username, token: response.token, id: response.id}));
         }
         setAuthenticateIsLoading(false);
         break;
@@ -100,6 +104,7 @@ const LoginScreen = () => {
       <View
         style={[
           styles.container,
+          styles.containerWhite,
           {paddingTop: insets.top, paddingBottom: insets.bottom},
         ]}>
         <KeyboardAvoidingView

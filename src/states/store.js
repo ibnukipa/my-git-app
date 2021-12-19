@@ -11,13 +11,15 @@ import {
 } from 'redux-persist';
 import {createPersistStorage} from '../utils/sensitiveStorage';
 import auth from './reducers/auth';
+import db from './reducers/db';
 
 const reducers = {
   auth,
+  db,
 };
 
 const persistConfig = {
-  key: 'mygitstatestoragekey',
+  key: 'mygitpersistedstates',
   storage: createPersistStorage(),
 };
 const persistedReducers = persistReducer(
@@ -27,6 +29,11 @@ const persistedReducers = persistReducer(
 
 const middlewares = [];
 
+if (__DEV__) {
+  const createDebugger = require('redux-flipper').default;
+  middlewares.push(createDebugger());
+}
+
 const store = configureStore({
   reducer: persistedReducers,
   middleware: getDefaultMiddleware =>
@@ -34,7 +41,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(middlewares),
 });
 
 const persistor = persistStore(store);
