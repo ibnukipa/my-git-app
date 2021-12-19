@@ -30,7 +30,7 @@ export const {login, logout} = authSlice.actions;
 export const authStateSelector = state => state.auth;
 export const profileSelector = createSelector(
   [authStateSelector, state => getCollectionSelector(state, {model: 'users'})],
-  (auth, users) => users[auth.id],
+  (auth, users) => users[auth.id] || {},
 );
 
 export default authSlice.reducer;

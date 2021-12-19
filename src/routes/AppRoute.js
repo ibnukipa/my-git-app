@@ -1,18 +1,24 @@
-import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, {useCallback} from 'react';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import DashboardScreen from '../screens/DashboardScreen';
-import {Platform, Image, StatusBar, StyleSheet, View} from 'react-native';
+import {Platform, StatusBar, StyleSheet, View} from 'react-native';
 import Text from '../components/Text';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Colors from '../constants/colors';
 import {useSelector} from 'react-redux';
 import {profileSelector} from '../states/reducers/auth';
+import ProfileScreen from '../screens/ProfileScreen';
+import Avatar from '../components/Avatar';
 
 const AppStack = createStackNavigator();
 
-const AppHeader = () => {
+const AppHeader = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const profile = useSelector(profileSelector);
+
+  const profilePress = useCallback(() => {
+    navigation.navigate('Profile');
+  }, [navigation]);
 
   return (
     <View
@@ -24,11 +30,10 @@ const AppHeader = () => {
         <Text size={24} heavy color={Colors.white}>
           MyGit
         </Text>
-        <Image
-          borderRadius={20}
-          style={appRouteStyle.headerContentAvatar}
+        <Avatar
+          borderless={false}
+          onPress={profilePress}
           source={{uri: profile.avatar_url}}
-          resizeMode={'cover'}
         />
       </View>
     </View>
@@ -44,6 +49,15 @@ const AppRoute = () => {
           header: props => <AppHeader {...props} />,
         }}>
         <AppStack.Screen name={'Dashboard'} component={DashboardScreen} />
+        <AppStack.Screen
+          name={'Profile'}
+          component={ProfileScreen}
+          options={{
+            gestureEnabled: true,
+            headerShown: false,
+            ...TransitionPresets.ModalPresentationIOS,
+          }}
+        />
       </AppStack.Navigator>
     </>
   );
@@ -59,12 +73,6 @@ const appRouteStyle = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  headerContentAvatar: {
-    borderWidth: 2,
-    borderColor: Colors.white,
-    height: 30,
-    width: 30,
   },
 });
 
