@@ -1,15 +1,17 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {isEmpty} from 'lodash';
+import {logout} from './auth';
 
 // TODO moved to local database
+const initialDbState = {
+  users: {},
+  repositories: {},
+  commits: {},
+  issues: {},
+};
 export const dbSlice = createSlice({
   name: '_db',
-  initialState: {
-    users: {},
-    repositories: {},
-    commits: {},
-    issues: {},
-  },
+  initialState: initialDbState,
   reducers: {
     insertModel: (state, action) => {
       const {model, id, data} = action.payload;
@@ -23,6 +25,15 @@ export const dbSlice = createSlice({
         delete state[model][id];
       }
     },
+    insertCollection: (state, action) => {
+      const {model, data} = action.payload;
+      if (model && !isEmpty(data)) {
+        state[model] = {
+          ...state[model],
+          ...data,
+        };
+      }
+    },
     clearCollection: (state, action) => {
       const {model} = action.payload;
       if (model) {
@@ -30,9 +41,15 @@ export const dbSlice = createSlice({
       }
     },
   },
+  extraReducers: builder => {
+    builder.addCase(logout, state => {
+      state = initialDbState;
+    });
+  },
 });
 
-export const {insertModel, deleteModel, clearCollection} = dbSlice.actions;
+export const {insertModel, deleteModel, insertCollection, clearCollection} =
+  dbSlice.actions;
 
 export const getByIdSelector = (state, {model, id}) =>
   state.db[model]?.[id] || {};

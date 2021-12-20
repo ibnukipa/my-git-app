@@ -72,6 +72,8 @@ const createPersistStorage = () => {
   };
 };
 
+// delStorageItem('persist:mygitpersistedstates');
+
 export {
   createPersistStorage,
   setStorageItem,

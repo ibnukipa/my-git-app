@@ -27,11 +27,10 @@ const persistedReducers = persistReducer(
   combineReducers(reducers),
 );
 
-const middlewares = [];
-
+let reduxDebuggerFlipper = null;
 if (__DEV__) {
   const createDebugger = require('redux-flipper').default;
-  middlewares.push(createDebugger());
+  reduxDebuggerFlipper = createDebugger();
 }
 
 const store = configureStore({
@@ -41,7 +40,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(middlewares),
+    }).concat(reduxDebuggerFlipper),
 });
 
 const persistor = persistStore(store);

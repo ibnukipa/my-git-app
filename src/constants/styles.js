@@ -10,6 +10,10 @@ const styles = StyleSheet.create({
   containerWhite: {
     backgroundColor: Colors.white,
   },
+  middle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

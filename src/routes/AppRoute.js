@@ -9,10 +9,11 @@ import {useSelector} from 'react-redux';
 import {profileSelector} from '../states/reducers/auth';
 import ProfileScreen from '../screens/ProfileScreen';
 import Avatar from '../components/Avatar';
+import CommitScreen from '../screens/CommitScreen';
 
 const AppStack = createStackNavigator();
 
-const AppHeader = ({navigation}) => {
+const AppHeader = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const profile = useSelector(profileSelector);
 
@@ -27,8 +28,8 @@ const AppHeader = ({navigation}) => {
         {paddingTop: insets.top + Platform.select({ios: 0, android: 10})},
       ]}>
       <View style={appRouteStyle.headerContentContainer}>
-        <Text size={24} heavy color={Colors.white}>
-          MyGit
+        <Text size={24} heavy color={Colors.white} numberOfLines={1}>
+          {route.params?.title || route.name}
         </Text>
         <Avatar
           borderless={false}
@@ -47,13 +48,26 @@ const AppRoute = () => {
       <AppStack.Navigator
         screenOptions={{
           header: props => <AppHeader {...props} />,
+          gestureEnabled: true,
+          cardShadowEnabled: true,
+          cardOverlayEnabled: true,
         }}>
-        <AppStack.Screen name={'Dashboard'} component={DashboardScreen} />
+        <AppStack.Screen
+          name={'Dashboard'}
+          title={'Dashboard'}
+          component={DashboardScreen}
+        />
+        <AppStack.Screen
+          name={'Commit'}
+          component={CommitScreen}
+          options={{
+            ...TransitionPresets.SlideFromRightIOS,
+          }}
+        />
         <AppStack.Screen
           name={'Profile'}
           component={ProfileScreen}
           options={{
-            gestureEnabled: true,
             headerShown: false,
             ...TransitionPresets.ModalPresentationIOS,
           }}
