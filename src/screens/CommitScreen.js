@@ -16,7 +16,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import getGithubCommits from '../services/getGithubCommits';
 import {isEmpty, union} from 'lodash';
 import styles from '../constants/styles';
-import { authStateSelector } from "../states/reducers/auth";
+import {authStateSelector} from '../states/reducers/auth';
 
 const CommitSnippet = memo(({id}) => {
   const item = useSelector(state =>
@@ -94,6 +94,11 @@ const useInfiniteScroll = ({fetcher, query, model, modelKey}) => {
 
   const callApi = useCallback(
     async currentPage => {
+      if (isLastPage) {
+        setIsLoading(false);
+        setIsFetching(false);
+        return;
+      }
       const response = await fetcher?.({
         ...query,
         page: currentPage,
@@ -103,6 +108,8 @@ const useInfiniteScroll = ({fetcher, query, model, modelKey}) => {
 
       if (isEmpty(response)) {
         setIsLastPage(true);
+        setIsLoading(false);
+        setIsFetching(false);
         return;
       }
 
@@ -132,7 +139,16 @@ const useInfiniteScroll = ({fetcher, query, model, modelKey}) => {
       setIsLoading(false);
       setIsFetching(false);
     },
-    [dispatch, fetcher, model, modelKey, perPage, query],
+    [
+      isLastPage,
+      fetcher,
+      query,
+      perPage,
+      authState.token,
+      dispatch,
+      model,
+      modelKey,
+    ],
   );
 
   const refresh = useCallback(() => {
@@ -174,15 +190,16 @@ const CommitScreen = () => {
     getByIdSelector(state, {model: 'repositories', id: route.params.repoId}),
   );
 
-  const {data, isFetching, isLoading, refresh, fetchMore} = useInfiniteScroll({
-    fetcher: getGithubCommits,
-    query: {
-      ownerSlug: repository.owner?.login,
-      repoSlug: repository.name,
-    },
-    model: 'commits',
-    modelKey: 'sha',
-  });
+  const {data, isFetching, isLoading, refresh, isLastPage, fetchMore} =
+    useInfiniteScroll({
+      fetcher: getGithubCommits,
+      query: {
+        ownerSlug: repository.owner?.login,
+        repoSlug: repository.name,
+      },
+      model: 'commits',
+      modelKey: 'sha',
+    });
 
   const renderItem = useCallback(({item}) => {
     return <CommitSnippet id={item} />;
@@ -221,9 +238,9 @@ const CommitScreen = () => {
         <RefreshControl refreshing={isLoading} onRefresh={refresh} />
       }
       ItemSeparatorComponent={renderSeparator}
-      onEndReached={!isLoading && !isFetching && fetchMore}
+      onEndReached={!isLoading && !isFetching ? fetchMore : null}
       ListFooterComponent={
-        isFetching && <ActivityIndicator color={Colors.blue} />
+        isFetching && !isLastPage && <ActivityIndicator color={Colors.blue} />
       }
     />
   );
